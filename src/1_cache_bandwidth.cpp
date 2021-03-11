@@ -7,6 +7,20 @@
 
 #include "utils.hpp"
 
+/* Code to clear cache */
+/* This computer has 12288K L3 cache, which is 3072K ints */
+#define ASIZE ((1 << 21) + (1 << 20))
+static int stuff[ASIZE];
+static int sink;
+
+static void clear_cache()
+{
+  int x = sink;
+  for (int i = 0; i < ASIZE; i += 16/*cache line size: 64bytes*/)
+    x += stuff[i];
+  sink = x;
+}
+
 using DTYPE = float;
 
 // L1 cache
@@ -48,6 +62,7 @@ int main() {
         std::vector<DTYPE> data(num_elem, 1.);
         size_t len_mod = num_elem - 1;
         size_t steps = 64 * 1024 * 1024;
+        clear_cache();
         double start = ms_now();
         for (int j = 0; j < steps; ++j) {
             data[(j * 16) & len_mod]++;
@@ -61,6 +76,7 @@ int main() {
             ((double)/*clock = */CLOCK);
         printf("Working set size: %.2f KiB,clear cycles per element is %.4f \n",
             total_size, cycles_per_element);
+        fflush(stdout);
     }
     return 1;
 }

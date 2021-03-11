@@ -5,6 +5,7 @@
 
 #include <sys/time.h>
 
+// timer function
 double ms_now() {
   struct timeval time;
   gettimeofday(&time, nullptr);
