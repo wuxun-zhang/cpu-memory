@@ -1,4 +1,4 @@
-// This is an example to demonstrate the impact of locality on MatMul's
+// This is an example to demonstrate the impact of spatial locality on MatMul's
 // performance
 
 #include <iostream>
@@ -55,7 +55,8 @@ public:
             }
         }
         double elapsed = ms_now() - start;
-        printf("version: mnk, time cost per innermost iter: %.2f ns\n",
+        printf("version: mnk, latency: %.2f ms, "
+            "time per innermost iter: %.2f ns\n", elapsed,
             (elapsed / (double)iters_) * 1e6);
         fflush(stdout);
     }
@@ -74,7 +75,8 @@ public:
             }
         }
         double elapsed = ms_now() - start;
-        printf("version: nmk, time cost per innermost iter: %.2f ns\n",
+        printf("version: nmk, latency: %.2f ms, "
+            "time per innermost iter: %.2f ns\n", elapsed,
             (elapsed / (double)iters_) * 1e6);
         fflush(stdout);
     }
@@ -92,7 +94,8 @@ public:
             }
         }
         double elapsed = ms_now() - start;
-        printf("version: nkm, time cost per innermost iter: %.2f ns\n",
+        printf("version: nkm, latency: %.2f ms, "
+            "time per innermost iter: %.2f ns\n", elapsed,
             (elapsed / (double)iters_) * 1e6);
         fflush(stdout);
     }
@@ -110,7 +113,8 @@ public:
             }
         }
         double elapsed = ms_now() - start;
-        printf("version: knm, time cost per innermost iter: %.2f ns\n",
+        printf("version: knm, latency: %.2f ms, "
+            "time per innermost iter: %.2f ns\n", elapsed,
             (elapsed / (double)iters_) * 1e6);
         fflush(stdout);
     }
@@ -128,12 +132,14 @@ public:
             }
         }
         double elapsed = ms_now() - start;
-        printf("version: kmn, time cost per innermost iter: %.2f ns\n",
+        printf("version: kmn, latency: %.2f ms, "
+            "time per innermost iter: %.2f ns\n", elapsed,
             (elapsed / (double)iters_) * 1e6);
         fflush(stdout);
     }
 
     // loop M -> loop K -> loop N
+    // best spatial locality
     void mkn() {
         clear_cache();
         double start = ms_now();
@@ -146,7 +152,8 @@ public:
             }
         }
         double elapsed = ms_now() - start;
-        printf("version: mkn, time cost per innermost iter: %.2f ns\n",
+        printf("version: mkn, latency: %.2f ms, "
+            "time per innermost iter: %.2f ns\n", elapsed,
             (elapsed / (double)iters_) * 1e6);
         fflush(stdout);
     }
