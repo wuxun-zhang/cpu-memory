@@ -18,7 +18,7 @@ static void clear_cache()
 }
 
 #define NUM_ITERS (200)
-#define NUM_ELEM (16 * 1024 * 1024)
+#define NUM_ELEM (32 * 1024 * 1024)
 #define STEP (16)
 
 using DTYPE = float;
@@ -30,11 +30,12 @@ void run_v1(std::vector<DTYPE> &src) {
         clear_cache();
         double start = ms_now();
         for (size_t n = 0; n < static_cast<size_t>(NUM_ELEM); ++n) {
-            src[n] += 1.1;
+            src[n] += 1.1f;
         }
         total_time += (ms_now() - start);
     }
-    std::cout << "elapsed time of v1: " << (total_time / NUM_ITERS) << " msec\n";
+    std::cout << "Time per iteration of v1: " <<
+        (total_time / NUM_ITERS) << " msec\n";
 }
 
 // the only difference is in v2 there will be a write operation every STEP elements
@@ -45,11 +46,12 @@ void run_v2(std::vector<DTYPE> &src) {
         clear_cache();
         double start = ms_now();
         for (size_t n = 0; n < static_cast<size_t>(NUM_ELEM); n += STEP) {
-            src[n] += 1.1;
+            src[n] += 1.1f;
         }
         total_time += (ms_now() - start);
     }
-    std::cout << "elapsed time of v2: " << (total_time / NUM_ITERS) << " msec\n";
+    std::cout << "Time per iteration of v2: " <<
+        (total_time / NUM_ITERS) << " msec\n";
 }
 
 int main() {

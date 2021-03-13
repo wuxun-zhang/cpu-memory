@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "utils.hpp"
 
@@ -30,8 +31,12 @@ private:
     std::vector<DTYPE> A_;
     std::vector<DTYPE> B_;
     std::vector<DTYPE> C_;
-    // total number of iterations for the three loops
+    // total number of innermost loops
     int iters_;
+
+    void reset() {
+        std::fill(C_.begin(), C_.end(), 0);
+    }
 
 public:
     matmul(int n) : n_(n) {
@@ -43,6 +48,7 @@ public:
 
     // loop M -> loop N -> loop K
     void mnk() {
+        reset();
         clear_cache();
         double start = ms_now();
         for (int i = 0; i < n_; ++i) {
@@ -63,6 +69,7 @@ public:
 
     // loop N -> loop M -> loop K
     void nmk() {
+        reset();
         clear_cache();
         double start = ms_now();
         for (int j = 0; j < n_; ++j) {
@@ -83,6 +90,7 @@ public:
 
     // loop N -> loop K -> loop M
     void nkm() {
+        reset();
         clear_cache();
         double start = ms_now();
         for (int j = 0; j < n_; ++j) {
@@ -102,6 +110,7 @@ public:
 
     // loop K -> loop N -> loop M
     void knm() {
+        reset();
         clear_cache();
         double start = ms_now();
         for (int k = 0; k < n_; ++k) {
@@ -121,6 +130,7 @@ public:
 
     // loop K -> loop M -> loop N
     void kmn() {
+        reset();
         clear_cache();
         double start = ms_now();
         for (int k = 0; k < n_; ++k) {
@@ -141,6 +151,7 @@ public:
     // loop M -> loop K -> loop N
     // best spatial locality
     void mkn() {
+        reset();
         clear_cache();
         double start = ms_now();
         for (int i = 0; i < n_; ++i) {
