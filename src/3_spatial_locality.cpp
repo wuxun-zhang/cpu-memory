@@ -179,5 +179,5 @@ int main() {
     mm.knm();
     mm.kmn();
     mm.mkn();
-    return 1;
+    return 0;
 }

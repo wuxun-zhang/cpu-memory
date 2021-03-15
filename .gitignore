@@ -4,6 +4,9 @@
 # vscode
 *.vscode
 
+# build
+build
+
 # Compiled Object files
 *.slo
 *.lo

@@ -61,5 +61,5 @@ int main() {
     run_v1(src_1);
     run_v2(src_2);
     
-    return 1;
+    return 0;
 }

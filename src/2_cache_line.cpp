@@ -47,5 +47,5 @@ void run(std::vector<DTYPE> &src) {
 int main() {
     std::vector<DTYPE> data(NUM_ELEM, 1);
     run(data);
-    return 1;
+    return 0;
 }

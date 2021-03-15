@@ -83,7 +83,7 @@ public:
             }
         }
         double elapsed = ms_now() - start;
-        printf("version: block-kmn, latency: %.2f ms, "
+        printf("version: block-knm, latency: %.2f ms, "
             "time per innermost iter: %.2f ns\n", elapsed,
                 (elapsed / (double)iters_) * 1e6);
         fflush(stdout);
@@ -94,5 +94,5 @@ public:
 int main() {
     block_matmul block_mm(1024);
     block_mm.knm();
-    return 1;
+    return 0;
 }

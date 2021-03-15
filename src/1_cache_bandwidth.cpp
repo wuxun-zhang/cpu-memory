@@ -78,5 +78,5 @@ int main() {
             total_size, cycles_per_element);
         fflush(stdout);
     }
-    return 1;
+    return 0;
 }
