@@ -16,12 +16,12 @@ ctest -V
 
 ## Samples
 
-- [memory access](../src/memory_access.md)
+- [memory access](doc/memory_access.md)
 
-- [cache bandwidth](../src/cache_bandwidth.md)
+- [cache bandwidth](doc/cache_bandwidth.md)
 
-- [cache line](../src/cache_line.md)
+- [cache line](doc/cache_line.md)
 
-- [spatial locality](../src/spatial_locality.md)
+- [spatial locality](doc/spatial_locality.md)
 
-- [temporal locality](../src/temporal_locality.md)
+- [temporal locality](doc/temporal_locality.md)
