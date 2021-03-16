@@ -11,12 +11,11 @@
 static int stuff[ASIZE];
 static int sink;
 
-static void clear_cache()
-{
-  int x = sink;
-  for (int i = 0; i < ASIZE; i += 16/*cache line size: 64bytes*/)
-    x += stuff[i];
-  sink = x;
+static void clear_cache() {
+    int x = sink;
+    for (int i = 0; i < ASIZE; i += 16 /*cache line size: 64bytes*/)
+        x += stuff[i];
+    sink = x;
 }
 
 #define NUM_ITERS (200)

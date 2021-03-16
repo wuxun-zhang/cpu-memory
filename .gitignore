@@ -7,6 +7,9 @@
 # build
 build
 
+# utility
+scripts
+
 # Compiled Object files
 *.slo
 *.lo

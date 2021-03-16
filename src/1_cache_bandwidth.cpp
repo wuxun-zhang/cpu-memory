@@ -13,12 +13,11 @@
 static int stuff[ASIZE];
 static int sink;
 
-static void clear_cache()
-{
-  int x = sink;
-  for (int i = 0; i < ASIZE; i += 16/*cache line size: 64bytes*/)
-    x += stuff[i];
-  sink = x;
+static void clear_cache() {
+    int x = sink;
+    for (int i = 0; i < ASIZE; i += 16 /*cache line size: 64bytes*/)
+        x += stuff[i];
+    sink = x;
 }
 
 using DTYPE = float;
@@ -53,9 +52,9 @@ using DTYPE = float;
 
 int main() {
     // define size of working set
-    std::vector<size_t> working_set {/*L1*/KB1, KB2, KB4, KB8, KB16, KB32,
-        /*L2*/KB64, /*KB96,*/ KB128, /*KB160,*/ KB256, /*L3*/KB512, KB1024, KB2048,
-        KB4096, KB8192, KB12288, /*RAM*/KB16384, KB32768};
+    std::vector<size_t> working_set {/*L1*/ KB1, KB2, KB4, KB8, KB16, KB32,
+            /*L2*/ KB64, /*KB96,*/ KB128, /*KB160,*/ KB256, /*L3*/ KB512,
+            KB1024, KB2048, KB4096, KB8192, KB12288, /*RAM*/ KB16384, KB32768};
 
     for (auto ws : working_set) {
         size_t num_elem = ws / sizeof(DTYPE);
