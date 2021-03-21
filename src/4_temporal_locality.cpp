@@ -65,7 +65,7 @@ public:
     void knm() {
         reset();
         clear_cache();
-        DTYPE packed_B[BLOCK_SIZE * BLOCK_SIZE] __attribute__ ((aligned (64)));
+        DTYPE packed_B[BLOCK_SIZE * BLOCK_SIZE];
         double start = ms_now();
         for (int k = 0; k < n_; k += BLOCK_SIZE) {
             for (int j = 0; j < n_; j += BLOCK_SIZE) {
@@ -73,9 +73,11 @@ public:
                 packBMatrix(&packed_B[0], &B_[k * n_ + j]);
                 for (int i = 0; i < n_; ++i) {
                     for (int kk = k; kk < k + BLOCK_SIZE; ++kk) {
+                        float tmp = A_[i * n_ + kk];
                         for (int jj = j; jj < j + BLOCK_SIZE; ++jj) {
-                            C_[i * n_ + jj] += A_[i * n_ + kk] *
-                                packed_B[(kk - k) * BLOCK_SIZE + (jj - j)];
+                            C_[i * n_ + jj] += tmp
+                                    * packed_B[(kk - k) * BLOCK_SIZE
+                                            + (jj - j)];
                         }
                     }
                 }

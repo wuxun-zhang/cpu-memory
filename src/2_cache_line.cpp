@@ -26,7 +26,6 @@ using DTYPE = float;
 void run(std::vector<DTYPE> &src) {
     // different skipping steps
     std::vector<size_t> steps {1, 2, 4, 8, 16, 32, 64, 128, 256};
-    // std::vector<size_t> steps {16};
     for (size_t s : steps) {
         double total_time = 0.;
         // iterations
