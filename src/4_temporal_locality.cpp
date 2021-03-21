@@ -2,22 +2,14 @@
 // performance
 
 #include <iostream>
+#include <random>
 #include <vector>
 
 #include "utils.hpp"
 
 /* Code to clear cache */
 /* This computer has 12288K L3 cache, which is 3072K ints */
-#define ASIZE ((1 << 21) + (1 << 20))
-static int stuff[ASIZE];
-static int sink;
-
-static void clear_cache() {
-    int x = sink;
-    for (int i = 0; i < ASIZE; i += 16 /*cache line size: 64bytes*/)
-        x += stuff[i];
-    sink = x;
-}
+#define NUM_INTS_IN_L3_CACHE ((1 << 21) + (1 << 20))
 
 using DTYPE = float;
 
@@ -41,6 +33,14 @@ private:
 
     void reset() {
         std::fill(C_.begin(), C_.end(), 0);
+    }
+
+    void clear_cache() {
+        int array[NUM_INTS_IN_L3_CACHE];
+        std::random_device gen;
+        std::uniform_int_distribution<int> dist(0, 10);
+        for (int i = 0; i < NUM_INTS_IN_L3_CACHE; ++i)
+            array[i] = dist(gen);
     }
 
     // pack sub-block of B_ into a matrix that is small enough to be
