@@ -14,10 +14,10 @@ set(CMAKE_CXX_STANDARD 11)
 
 enable_testing()
 
-file(GLOB SRC_FILE src/*.cpp)
+file(GLOB SRC_FILE tests/*.cpp)
 
 foreach(src ${SRC_FILE})
-    file(RELATIVE_PATH src_rel_path ${CMAKE_SOURCE_DIR}/src ${src})
+    file(RELATIVE_PATH src_rel_path ${CMAKE_SOURCE_DIR}/tests ${src})
     string(REGEX REPLACE "[/_\\.]" "-" example_name ${src_rel_path})
 
     add_executable(${example_name} ${src})

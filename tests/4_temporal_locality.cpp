@@ -78,6 +78,9 @@ public:
                             C_[i * n_ + jj] += tmp
                                     * packed_B[(kk - k) * BLOCK_SIZE
                                             + (jj - j)];
+                            // may introduce more page faults if directly access
+                            // memory from B_
+                            // C_[i * n_ + jj] += tmp * B_[kk * n_ + jj];
                         }
                     }
                 }
