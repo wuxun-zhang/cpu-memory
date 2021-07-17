@@ -25,3 +25,5 @@ ctest -V
 - [spatial locality](doc/spatial_locality.md)
 
 - [temporal locality](doc/temporal_locality.md)
+
+- [dynamic memory pool example](tests/test_dynamic_mempool.cpp)
