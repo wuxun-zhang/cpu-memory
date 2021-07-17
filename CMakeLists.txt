@@ -10,7 +10,7 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 enable_testing()
 
@@ -22,7 +22,9 @@ foreach(src ${SRC_FILE})
 
     add_executable(${example_name} ${src})
 
-    target_include_directories(${example_name} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+    target_include_directories(${example_name} PUBLIC
+        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR})
 
     target_link_libraries(${example_name} PUBLIC)
 
