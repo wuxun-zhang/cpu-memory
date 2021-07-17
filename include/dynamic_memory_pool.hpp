@@ -11,6 +11,10 @@ namespace dynamic_mempool {
 // Implemented by two list
 // * allocated_list_ -> list of memory chunks being allocated
 // * free_list_ -> list of memory chunks being unused in increasing order
+//
+// Take-aways
+//  ** linear search complexity
+//  ** poor data locality - not contiguous between adjacent nodes
 class MemoryPool {
 private:
     // default ctor
