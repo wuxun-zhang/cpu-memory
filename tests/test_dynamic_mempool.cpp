@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "include/dynamic_memory_pool.hpp"
+#include "dynamic_memory_pool.hpp"
 
 int main() {
     void *ptr1 = dynamic_mempool::MemoryPool::Instance().allocate(10);
