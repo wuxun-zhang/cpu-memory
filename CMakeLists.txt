@@ -14,18 +14,5 @@ set(CMAKE_CXX_STANDARD 14)
 
 enable_testing()
 
-file(GLOB SRC_FILE tests/*.cpp)
-
-foreach(src ${SRC_FILE})
-    file(RELATIVE_PATH src_rel_path ${CMAKE_SOURCE_DIR}/tests ${src})
-    string(REGEX REPLACE "[/_\\.]" "-" example_name ${src_rel_path})
-
-    add_executable(${example_name} ${src})
-
-    target_include_directories(${example_name} PUBLIC
-        ${CMAKE_SOURCE_DIR}/include)
-
-    target_link_libraries(${example_name} PUBLIC)
-
-    add_test(${example_name} ${example_name})
-endforeach()
+add_subdirectory(src)
+add_subdirectory(tests)
