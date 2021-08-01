@@ -3,8 +3,9 @@
 
 #include <cmath>
 #include <iostream>
-#include <map>
+#include <memory>
 #include <vector>
+#include <unordered_map>
 
 // Manages memory in power of two increments
 // * If 2^(U-1)<S<=2^U: Allocate the whole block
@@ -21,21 +22,14 @@ namespace buddy_mempool {
 // minimal allocation unit - 4 bytes
 #define MIN_ALLOC_UNIT (4)
 
-struct GlobalVars {
-    // how many level in this memory pool - depends on the initial capacity of
-    // memory pool
-    size_t size;
-    // free list to store pairs containing starting and ending address/position
-    std::vector<std::pair<int64_t, size_t>> free_list[10000];
-    // mapping from starting address to size - for deallocation
-    // quickly to search the given pointer
-    std::map<int64_t, size_t> addr_to_size_map;
-};
-
 class MemoryPool {
 private:
     // default ctor - need initial capacity
     MemoryPool(size_t n) {
+        // allocate real buffer
+        std::unique_ptr<char> temp_mem = std::make_unique<char>(n);
+        data_ = temp_mem.release();
+
         int num_elem_in_free_list
                 = static_cast<int>(std::ceil(log(n) / log(2)));
         global_vars_.size = num_elem_in_free_list + 1;
@@ -46,22 +40,25 @@ private:
         global_vars_.free_list[num_elem_in_free_list].push_back({0, n - 1});
     }
 
-    ~MemoryPool() {}
+    // default d-ctor
+    ~MemoryPool() { release(); }
 
 public:
+    // Singletone
     static MemoryPool &Instance() {
         static MemoryPool inst(2048);
         return inst;
     }
 
     // Divide process
+    // time complexity is O(log(N))
     void *allocate(size_t n) {
         int chunk_idx = static_cast<int>(ceil(log(n) / log(2)));
+        std::pair<int64_t, size_t> temp;
         if (global_vars_.free_list[chunk_idx].size() > 0) {
-            std::pair<int64_t, size_t> temp
-                    = global_vars_.free_list[chunk_idx][0];
+            temp = global_vars_.free_list[chunk_idx][0];
             // remove chunks from free list
-            global_vars_.free_list[n].erase(
+            global_vars_.free_list[chunk_idx].erase(
                     global_vars_.free_list[chunk_idx].begin());
             global_vars_.addr_to_size_map[temp.first]
                     = temp.second - temp.first + 1;
@@ -80,7 +77,7 @@ public:
                              "found\n";
             } else { // found
                 // (0, 127)
-                std::pair<int64_t, size_t> temp = global_vars_.free_list[i][0];
+                temp = global_vars_.free_list[i][0];
                 global_vars_.free_list[i].erase(
                         global_vars_.free_list[i].begin());
                 i--;
@@ -111,7 +108,7 @@ public:
                           << "\n";
             }
         }
-        return nullptr; /*base_ptr + temp.first*/
+        return nullptr; /*static_cast<void *>(data_ + temp.first)*/
     }
 
     // Combine process
@@ -146,6 +143,7 @@ public:
                             {buddyAddress,
                                     2 * pow(2, chunk_idx) + buddyAddress});
 
+                // then delete two buddy chunks in lower level
                 global_vars_.free_list[chunk_idx].erase(
                         global_vars_.free_list[chunk_idx].begin() + i);
                 global_vars_.free_list[chunk_idx].erase(
@@ -158,10 +156,29 @@ public:
         std::cout << "Returning Memory " << base_addr << " to pool\n";
     }
 
-    void release() {}
+    // free all of memory chunks in the memory pool
+    void release() {
+        if (data_) {
+            delete[] data_;
+            std::cout << "Releasing memory buffer...\n";
+        }
+    }
 
 private:
-    GlobalVars global_vars_;
+    struct GlobalVars {
+        // how many level in this memory pool - depends on the initial capacity
+        // of memory pool
+        size_t size;
+        // free list to store pairs containing starting and ending
+        // address/position
+        std::vector<std::pair<int64_t, size_t>> free_list[10000];
+        // mapping from starting address to size - for deallocation
+        // quickly to search the given pointer
+        std::unordered_map<int64_t, size_t> addr_to_size_map;
+    } global_vars_;
+
+    // real buffer
+    char *data_ {nullptr};
 };
 
 } // namespace buddy_mempool
