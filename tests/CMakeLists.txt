@@ -5,8 +5,7 @@ foreach(src ${SRC_FILE})
     string(REGEX REPLACE "[/_\\.]" "-" example_name ${src_rel_path})
 
     add_executable(${example_name} ${src})
-    target_link_libraries(${example_name} PUBLIC
-        MemoryLib)
+    target_link_libraries(${example_name} PUBLIC)
 
     target_include_directories(${example_name} PUBLIC
         ${CMAKE_SOURCE_DIR}/include)

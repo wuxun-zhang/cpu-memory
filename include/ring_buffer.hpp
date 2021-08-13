@@ -46,7 +46,7 @@ private:
 
 public:
     // default ctor
-    RingBuffer() : myBegin_(0), myEnd_(0), mySize_(0), myCapacity_(N) {}
+    RingBuffer() : myBegin_(1), myEnd_(0), mySize_(0), myCapacity_(N) {}
 
     // reference to the head of the buffer
     reference front() { return myBuffer_[myBegin_]; }
@@ -57,45 +57,99 @@ public:
     // reference to the tail of the buffer
     const_reference back() const { return myBuffer_[myEnd_]; }
 
-    void clear();
+    void clear() {
+        myBegin_ = 1;
+        myEnd_ = 0;
+        mySize_ = 0;
+    }
 
-    void push_back(const value_type &item);
+    void push_back(const value_type &item) {
+        if (full()) increment_head();
+        increment_tail();
+        myBuffer_[myEnd_] = item;
+    }
     void push(const value_type &item) { push_back(item); }
-    void pop_front();
+    void pop_front() { increment_head(); }
     void pop() { pop_front(); }
 
     size_type size() const { return mySize_; }
     size_type capacity() const { return myCapacity_; }
-    bool empty();
-    bool full();
+    bool empty() { return mySize_ == 0; }
+    bool full() { return mySize_ == myCapacity_; }
 
-    reference operator[](size_type index);
-    const_reference operator[](size_type index) const;
+    reference operator[](size_type index) {
+        return myBuffer_[(myBegin_ + index) % mySize_];
+    }
+    const_reference operator[](size_type index) const {
+        return myBuffer_[(myBegin_ + index) % mySize_];
+    }
     // perform range check
-    reference at(size_type index);
-    const_reference at(size_type index) const;
+    reference at(size_type index) {
+        if (index < mySize_) return myBuffer_[(myBegin_ + index) % mySize_];
+        throw std::out_of_range("index too large.");
+    }
+    const_reference at(size_type index) const {
+        if (index < mySize_) return myBuffer_[(myBegin_ + index) % mySize_];
+        throw std::out_of_range("index too large.");
+    }
 
-    iterator begin();
-    const_iterator cbegin() const;
-    iterator end();
-    const_iterator cend() const;
+    iterator begin() {
+        iterator iter(*this, myCapacity_);
+        iter.myIndex_ = 0;
+        iter.myOffset_ = myBegin_;
+        return iter;
+    }
+    const_iterator cbegin() const {
+        const_iterator iter(*this, myCapacity_);
+        iter.myIndex_ = 0;
+        iter.myOffset_ = myBegin_;
+        return iter;
+    }
+    iterator end() {
+        iterator iter(*this, myCapacity_);
+        iter.myIndex_ = mySize_;
+        iter.myOffset_ = myBegin_;
+        return iter;
+    }
+    const_iterator cend() const {
+        const_iterator iter(*this, myCapacity_);
+        iter.myIndex_ = 0;
+        iter.myOffset_ = myBegin_;
+        return iter;
+    }
 
     // print out all of elements in the buffer
     void display() {
-        for (size_t i = myBegin_; i < mySize_; ++i) {
-            std::cout << myBuffer_[i & (myCapacity_ - 1)] << ", ";
+        std::cout << "Capacity of buffer: " << myCapacity_ << std::endl;
+        std::cout << "Size of buffer: " << mySize_ << std::endl;
+        std::cout << "Elements in buffer: ";
+        for (size_t i = myBegin_; i < myBegin_ + mySize_; ++i) {
+            std::cout << myBuffer_[i % mySize_] << ", ";
         }
         std::cout << std::endl;
     }
 
 private:
-    void increment_head();
-    void increment_tail();
+    void increment_head() {
+        // if there is no element in the buffer, no need to increment head
+        if (mySize_ == 0) return;
+        ++myBegin_;
+        --mySize_;
+        // if size increases to capacity, then reset to 0
+        if (myBegin_ == myCapacity_) myBegin_ = 0;
+    }
+    void increment_tail() {
+        ++myEnd_;
+        ++mySize_;
+        if (myEnd_ == myCapacity_) myEnd_ = 0;
+    }
 };
 
 // Definition of iterator
 template <typename T, size_t N>
 class RingIter {
+    friend class RingBuffer<T, N>;
+
 private:
     // as a reference to the given RingBuffer instance
     RingBuffer<T, N> &myRingBuffer_;
@@ -112,7 +166,7 @@ public:
     typedef size_t size_type;
 
     RingIter(RingBuffer<T, N> &rb, size_t size)
-        : myRingBuffer_(rb), myModSize_(size - 1), myIndex_(0), myOffset_(0) {}
+        : myRingBuffer_(rb), myModSize_(size), myIndex_(0), myOffset_(0) {}
 
     bool operator==(const RingIter &other) {
         if (this == &other) return true;
@@ -121,11 +175,11 @@ public:
     }
     bool operator!=(const RingIter &other) { return !operator==(other); }
     reference operator*() {
-        return myRingBuffer_[(myOffset_ + myIndex_) & myModSize_];
+        return myRingBuffer_[(myOffset_ + myIndex_) % myModSize_];
     }
-    // reference operator[](size_type idx) {
-    //     return myRingBuffer_[(myOffset_ + myIndex_) & myModSize_];
-    // }
+    reference operator[](size_type idx) {
+        return myRingBuffer_[(myOffset_ + myIndex_) % myModSize_];
+    }
     // prefix ++
     RingIter &operator++() {
         myIndex_++;
